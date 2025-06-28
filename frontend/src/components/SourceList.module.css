@@ -1,0 +1,28 @@
+.sourceList {
+  width: 100%;
+  margin: 0;
+}
+
+.title {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.list {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sourceList {
+    padding: 1rem;
+  }
+}
