@@ -10,11 +10,12 @@ import { SourceModel } from './models/Source';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 
 // Database connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 // Test database connection on startup
@@ -56,7 +57,7 @@ app.get('/api/db-health', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🏰 Server running on port ${PORT}`);
 });
 
