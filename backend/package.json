@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "npm install --include=dev && npx tsc",
     "start": "node dist/index.js"
   },
   "dependencies": {
