@@ -57,14 +57,39 @@ app.get('/api/db-health', async (req, res) => {
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🏰 Server running on port ${PORT}`);
 });
 
-// Graceful shutdown
-process.on('SIGINT', () => {
-  pool.end(() => {
-    console.log('Database connection closed');
-    process.exit(0);
+// Graceful shutdown handler
+const shutdown = async (signal: string) => {
+  console.log(`🛑 Received ${signal}. Shutting down gracefully...`);
+  
+  // Close the HTTP server
+  server.close(() => {
+    console.log('✅ HTTP server closed');
   });
+  
+  // Close database connections
+  await pool.end();
+  console.log('✅ Database connection closed');
+  
+  // Exit the process
+  process.exit(0);
+};
+
+// Handle different termination signals
+process.on('SIGINT', () => shutdown('SIGINT'));  // Ctrl+C
+process.on('SIGTERM', () => shutdown('SIGTERM')); // Container orchestration (e.g., Docker, Kubernetes)
+process.on('SIGQUIT', () => shutdown('SIGQUIT')); // Keyboard quit
+
+// Handle uncaught exceptions and unhandled rejections
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  shutdown('uncaughtException');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  shutdown('unhandledRejection');
 });
